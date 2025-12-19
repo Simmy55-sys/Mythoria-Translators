@@ -5,7 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import ErrorToast from "@/global/toasts/error";
 
 export const metadata = {
-  title: "ApexNovel",
+  title: "Mythoria",
   description: "The Best noveels, you'd never want to miss.",
 };
 

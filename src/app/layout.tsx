@@ -3,7 +3,7 @@ import { cormorant, satoshi } from "./font";
 import { Toaster } from "sonner";
 
 export const metadata = {
-  title: "ApexNovel",
+  title: "Mythoria",
   description: "The Best noveels, you'd never want to miss.",
 };
 
