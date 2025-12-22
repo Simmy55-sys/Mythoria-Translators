@@ -28,6 +28,7 @@ import {
   getSeriesChaptersAction,
   deleteChapterAction,
 } from "@/server-actions/translator";
+import EditSeriesDialog from "../edit-series-dialog";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlertIcon } from "lucide-react";
@@ -89,6 +90,7 @@ export default function ManageSeriesDetailsComponent({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [chapterToDelete, setChapterToDelete] = useState<Chapter | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const chaptersPerPage = 20;
   const router = useRouter();
 
@@ -339,6 +341,7 @@ export default function ManageSeriesDetailsComponent({
               <Button
                 variant="outline"
                 className="border-[#27272A] hover:text-foreground hover:bg-card bg-transparent"
+                onClick={() => setEditDialogOpen(true)}
               >
                 <Edit size={16} />
                 Edit Series
@@ -529,6 +532,37 @@ export default function ManageSeriesDetailsComponent({
           <CommentSection seriesId={params.seriesId} />
         </div>
       </div>
+
+      {/* Edit Series Dialog */}
+      <EditSeriesDialog
+        open={editDialogOpen}
+        onOpenChange={(open) => {
+          setEditDialogOpen(open);
+        }}
+        seriesId={params.seriesId}
+        onSuccess={() => {
+          // Reload series data
+          const fetchData = async () => {
+            setLoading(true);
+            setError("");
+            try {
+              const seriesResult = await getSeriesByIdAction(params.seriesId);
+              if (!seriesResult.success) {
+                setError(seriesResult.error || "Failed to fetch series");
+                setLoading(false);
+                return;
+              }
+              setSeries(seriesResult.data);
+            } catch (err: any) {
+              setError(err.message || "An unexpected error occurred");
+              console.error("Error fetching series details:", err);
+            } finally {
+              setLoading(false);
+            }
+          };
+          fetchData();
+        }}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

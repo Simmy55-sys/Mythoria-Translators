@@ -12,6 +12,7 @@ import { getTranslatorSeriesAction } from "@/server-actions/translator";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlertIcon } from "lucide-react";
+import EditSeriesDialog from "./edit-series-dialog";
 
 interface Series {
   id: string;
@@ -41,6 +42,8 @@ export default function ManageSeriesComponent() {
   const [series, setSeries] = useState<Series[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSeries = async () => {
@@ -193,6 +196,10 @@ export default function ManageSeriesComponent() {
                       variant="outline"
                       size="icon"
                       className="border-primary/30 hover:bg-primary/10 bg-transparent hover:text-white"
+                      onClick={() => {
+                        setSelectedSeriesId(item.id);
+                        setEditDialogOpen(true);
+                      }}
                     >
                       <Edit size={16} />
                     </Button>
@@ -230,6 +237,53 @@ export default function ManageSeriesComponent() {
           </div>
         )}
       </div>
+
+      {/* Edit Series Dialog */}
+      {selectedSeriesId && (
+        <EditSeriesDialog
+          open={editDialogOpen}
+          onOpenChange={(open) => {
+            setEditDialogOpen(open);
+            if (!open) {
+              setSelectedSeriesId(null);
+            }
+          }}
+          seriesId={selectedSeriesId}
+          onSuccess={() => {
+            // Refresh series list
+            const fetchSeries = async () => {
+              setLoading(true);
+              setError("");
+              try {
+                const result = await getTranslatorSeriesAction();
+                if (result.success && result.data) {
+                  const mappedSeries: Series[] = result.data.map(
+                    (item: SeriesResponse) => ({
+                      id: item.id,
+                      title: item.title,
+                      slug: item.slug || item.title.toLowerCase().replace(/\s+/g, "-"),
+                      image: item.featuredImage || "/placeholder.svg",
+                      chapters: item.chapters || 0,
+                      status: item.status || "ongoing",
+                      views: item.views || 0,
+                      rating: item.rating || 0,
+                    })
+                  );
+                  setSeries(mappedSeries);
+                } else {
+                  setError(result.error || "Failed to fetch series");
+                }
+              } catch (err: any) {
+                setError(err.message || "An unexpected error occurred");
+                console.error("Error fetching series:", err);
+              } finally {
+                setLoading(false);
+              }
+            };
+            fetchSeries();
+          }}
+        />
+      )}
     </main>
   );
 }

@@ -59,6 +59,36 @@ export async function createSeriesAction(formData: FormData) {
   } as const;
 }
 
+export async function updateSeriesAction(seriesId: string, formData: FormData) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_ID)?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    } as const;
+  }
+
+  const response = await apiClientManager.updateSeries(
+    seriesId,
+    formData,
+    accessToken
+  );
+
+  if (!response.success) {
+    return {
+      success: false,
+      error: response.error.message,
+    } as const;
+  }
+
+  return {
+    success: true,
+    data: response.data,
+  } as const;
+}
+
 export async function getTranslatorSeriesAction() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_ID)?.value;

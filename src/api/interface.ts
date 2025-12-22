@@ -137,6 +137,23 @@ class ApiClient {
   }
 
   /**
+   * Update an existing series
+   * @param seriesId - The series ID
+   * @param payload - The series update payload
+   * @param accessToken - The user's access token
+   */
+  async updateSeries(seriesId: string, payload: FormData, accessToken: string) {
+    return this.execute<SeriesResponse>({
+      method: "PATCH",
+      endpoint: `/translator/series/${seriesId}`,
+      data: payload,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  /**
    * Get translator's assigned series
    * @param accessToken - The user's access token
    */
