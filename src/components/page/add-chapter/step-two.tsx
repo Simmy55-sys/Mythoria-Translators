@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlertIcon } from "lucide-react";
 import Image from "next/image";
+import InbuiltEditor from "./global/inbuilt-editor";
 
 interface Step2Props {
   selectedSeries: any;
@@ -178,7 +179,7 @@ export default function AddChapterStepTwo({
                 />
               ) : (
                 <div>
-                  <textarea
+                  {/* <textarea
                     placeholder="Enter chapter content here..."
                     value={chapterData.content || ""}
                     onChange={(e) =>
@@ -186,6 +187,9 @@ export default function AddChapterStepTwo({
                     }
                     className="w-full border border-[#27272A] rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none bg-[#27272A] min-h-64"
                     rows={10}
+                  /> */}
+                  <InbuiltEditor
+                    onSave={(content) => updateChapterData({ content })}
                   />
                 </div>
               )}

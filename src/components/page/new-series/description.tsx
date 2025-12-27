@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import RichTextEditor from "./rich-text-editor";
 
 export default function Description({
   description,
@@ -11,6 +12,17 @@ export default function Description({
     >
   ) => void;
 }) {
+  const handleDescriptionChange = (html: string) => {
+    // Create a synthetic event to match the expected signature
+    const syntheticEvent = {
+      target: {
+        name: "description",
+        value: html,
+      },
+    } as React.ChangeEvent<HTMLTextAreaElement>;
+    handleInputChange(syntheticEvent);
+  };
+
   return (
     <Card className="p-6 border border-border/50 backdrop-blur-sm bg-[#27272A]/30">
       <h2 className="text-xl font-semibold mb-6 text-foreground flex items-center gap-2">
@@ -19,14 +31,10 @@ export default function Description({
         </span>
         Description
       </h2>
-      <textarea
-        name="description"
+      <RichTextEditor
+        content={description}
+        onChange={handleDescriptionChange}
         placeholder="Write a compelling summary for your novel..."
-        value={description}
-        onChange={handleInputChange}
-        className="w-full border rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-0 focus:ring-primary/50 resize-none bg-[#27272A] border-[#27272A]"
-        rows={6}
-        required
       />
     </Card>
   );

@@ -24,6 +24,7 @@ import {
   updateSeriesAction,
   getSeriesByIdAction,
 } from "@/server-actions/translator";
+import RichTextEditor from "@/components/page/new-series/rich-text-editor";
 import { toast } from "sonner";
 import LoadingToast from "@/global/toasts/loading";
 import ErrorToast from "@/global/toasts/error";
@@ -132,6 +133,10 @@ export default function EditSeriesDialog({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleDescriptionChange = (html: string) => {
+    setFormData((prev) => ({ ...prev, description: html }));
   };
 
   const handleCategoryToggle = (category: string) => {
@@ -256,14 +261,13 @@ export default function EditSeriesDialog({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="mt-1"
-                rows={4}
-              />
+              <div className="mt-1">
+                <RichTextEditor
+                  content={formData.description}
+                  onChange={handleDescriptionChange}
+                  placeholder="Write a compelling summary for your novel..."
+                />
+              </div>
             </div>
 
             <div>

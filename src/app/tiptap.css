@@ -1,0 +1,5 @@
+.editorWrapper [class*="ProseMirror"] {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  min-height: 200px;
+}

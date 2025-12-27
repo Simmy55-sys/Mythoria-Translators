@@ -153,6 +153,33 @@
   }
 }
 
+@keyframes shake {
+  0% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-2px, 2px);
+  }
+  50% {
+    transform: translate(2px, -2px);
+  }
+  75% {
+    transform: translate(-2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @utility container {
   margin-inline: auto;
   padding-inline: 1.5rem;
@@ -227,6 +254,14 @@
     flex: 0 0 100%;
     min-width: 0;
   }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-in-out;
+  }
+
+  .animate-shake {
+    animation: shake 0.4s ease-in-out infinite;
+  }
 }
 
 @layer components {
@@ -282,4 +317,607 @@ body {
   to {
     height: 0;
   }
+}
+
+/* Magic Tag Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes echo {
+  0%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateX(4px);
+  }
+}
+
+@keyframes radiate {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes radiate-delayed {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  33% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes radiate-delayed-2 {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  66% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(100%);
+  }
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+@keyframes static {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+@keyframes text-break {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-2px) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(2px) rotate(0.5deg);
+  }
+}
+
+@keyframes soft-glow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-10px) rotate(10deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-8px) rotate(-10deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes float-delayed-2 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-12px) rotate(5deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes fire-flicker {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scaleY(1);
+  }
+  25% {
+    opacity: 0.4;
+    transform: scaleY(1.1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scaleY(0.9);
+  }
+  75% {
+    opacity: 0.5;
+    transform: scaleY(1.05);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-echo {
+  animation: echo 2s ease-in-out infinite;
+}
+
+.animate-radiate {
+  animation: radiate 2s ease-in-out infinite;
+}
+
+.animate-radiate-delayed {
+  animation: radiate-delayed 2s ease-in-out infinite;
+}
+
+.animate-radiate-delayed-2 {
+  animation: radiate-delayed-2 2s ease-in-out infinite;
+}
+
+.animate-glitch {
+  animation: glitch 0.3s infinite;
+}
+
+.animate-static {
+  animation: static 0.1s linear infinite;
+}
+
+.animate-text-break {
+  animation: text-break 0.5s ease-in-out infinite;
+}
+
+.animate-soft-glow {
+  animation: soft-glow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 3s ease-in-out infinite 0.5s;
+}
+
+.animate-float-delayed-2 {
+  animation: float-delayed-2 3s ease-in-out infinite 1s;
+}
+
+.animate-fire-flicker {
+  animation: fire-flicker 0.3s ease-in-out infinite;
+}
+
+/* Power/Growth Event Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(234, 179, 8, 0.8), 0 0 60px rgba(234, 179, 8, 0.4);
+  }
+}
+
+@keyframes golden-shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+@keyframes flash {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+    background: rgba(59, 130, 246, 0.3);
+  }
+}
+
+@keyframes crack-particle {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(10px, -10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(20px, -20px) scale(0);
+  }
+}
+
+@keyframes crack-particle-delayed {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-10px, -10px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-20px, -20px) scale(0);
+  }
+}
+
+@keyframes crack-particle-delayed-2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(0, -15px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -30px) scale(0);
+  }
+}
+
+@keyframes scroll-effect {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+}
+
+@keyframes rune-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes rune-float-delayed {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-15px) rotate(-180deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes portal-ring {
+  0% {
+    transform: scale(0.8) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(0.8) rotate(360deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes portal-ring-delayed {
+  0% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1) rotate(-180deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(0.6) rotate(-360deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes smoky {
+  0%, 100% {
+    opacity: 0.1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes arcane-glow {
+  0%, 100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes glyph-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-8px) rotate(90deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes glyph-float-delayed {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-6px) rotate(-90deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes glyph-float-delayed-2 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-10px) rotate(45deg);
+    opacity: 0.7;
+  }
+}
+
+@keyframes hud-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Combat Event Animations */
+@keyframes vibration {
+  0%, 100% {
+    transform: translate(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translate(-2px, -2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translate(2px, 2px);
+  }
+}
+
+@keyframes stretch {
+  0%, 100% {
+    transform: scaleX(1);
+    letter-spacing: normal;
+  }
+  50% {
+    transform: scaleX(1.1);
+    letter-spacing: 2px;
+  }
+}
+
+@keyframes combo-sequence {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes drip {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes drip-delayed {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes drip-delayed-2 {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-to-shadow {
+  0%, 100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  50% {
+    opacity: 0.6;
+    filter: blur(2px);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-golden-shimmer {
+  animation: golden-shimmer 2s infinite;
+}
+
+.animate-flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+.animate-crack-particle {
+  animation: crack-particle 1s ease-out infinite;
+}
+
+.animate-crack-particle-delayed {
+  animation: crack-particle-delayed 1s ease-out infinite 0.3s;
+}
+
+.animate-crack-particle-delayed-2 {
+  animation: crack-particle-delayed-2 1s ease-out infinite 0.6s;
+}
+
+.animate-scroll-effect {
+  animation: scroll-effect 3s linear infinite;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(16, 185, 129, 0.1),
+    transparent
+  );
+}
+
+.animate-rune-float {
+  animation: rune-float 3s ease-in-out infinite;
+}
+
+.animate-rune-float-delayed {
+  animation: rune-float-delayed 3s ease-in-out infinite 1s;
+}
+
+.animate-portal-ring {
+  animation: portal-ring 2s ease-in-out infinite;
+}
+
+.animate-portal-ring-delayed {
+  animation: portal-ring-delayed 2s ease-in-out infinite 0.5s;
+}
+
+.animate-smoky {
+  animation: smoky 2s ease-in-out infinite;
+}
+
+.animate-arcane-glow {
+  animation: arcane-glow 2s ease-in-out infinite;
+}
+
+.animate-glyph-float {
+  animation: glyph-float 2s ease-in-out infinite;
+}
+
+.animate-glyph-float-delayed {
+  animation: glyph-float-delayed 2s ease-in-out infinite 0.5s;
+}
+
+.animate-glyph-float-delayed-2 {
+  animation: glyph-float-delayed-2 2s ease-in-out infinite 1s;
+}
+
+.animate-hud-scan {
+  animation: hud-scan 2s linear infinite;
+}
+
+.animate-vibration {
+  animation: vibration 0.1s ease-in-out infinite;
+}
+
+.animate-combo-sequence {
+  animation: combo-sequence 0.8s ease-in-out;
+}
+
+.animate-drip {
+  animation: drip 2s ease-in infinite;
+}
+
+.animate-drip-delayed {
+  animation: drip-delayed 2s ease-in infinite 0.5s;
+}
+
+.animate-drip-delayed-2 {
+  animation: drip-delayed-2 2s ease-in infinite 1s;
+}
+
+.animate-fade-to-shadow {
+  animation: fade-to-shadow 2s ease-in-out infinite;
 }

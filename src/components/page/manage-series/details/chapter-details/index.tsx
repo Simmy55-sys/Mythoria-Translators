@@ -33,6 +33,7 @@ import LoadingToast from "@/global/toasts/loading";
 import ErrorToast from "@/global/toasts/error";
 import SuccessToast from "@/global/toasts/success";
 import CommentSection from "@/components/comment/comment-section";
+import MagicRenderer from "@/components/page/add-chapter/global/magic-tags/renderer";
 
 interface ChapterResponse {
   id: string;
@@ -281,14 +282,12 @@ export default function ChapterDetailsComponent({
               <div className="prose prose-invert max-w-none">
                 {chapter.content ? (
                   <>
-                    <div className="text-foreground leading-relaxed whitespace-pre-wrap">
-                      {(showFullContent ? chapter.content : previewContent)
-                        .split("\n")
-                        .map((para, index) => (
-                          <p key={index} className="mb-4">
-                            {para || "\u00A0"}
-                          </p>
-                        ))}
+                    <div className="text-foreground leading-relaxed">
+                      <MagicRenderer
+                        content={
+                          showFullContent ? chapter.content : previewContent
+                        }
+                      />
                     </div>
                     {hasMoreContent && (
                       <div className="mt-6 pt-6 border-t border-border">
