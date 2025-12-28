@@ -110,9 +110,37 @@ export default function AddChapterStepThree({
         </div>
 
         {chapterData.isPremium && (
-          <p className="text-xs mt-3 text-amber-500">
-            Users need coins to read this chapter
-          </p>
+          <div className="mt-4 space-y-2">
+            <label
+              htmlFor="priceInCoins"
+              className="block text-sm font-medium text-foreground"
+            >
+              Coin Price
+            </label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="priceInCoins"
+                type="number"
+                min="1"
+                step="1"
+                value={chapterData.priceInCoins || ""}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10);
+                  if (!isNaN(value) && value > 0) {
+                    updateChapterData({ priceInCoins: value });
+                  } else if (e.target.value === "") {
+                    updateChapterData({ priceInCoins: 0 });
+                  }
+                }}
+                className="border-[#27272A] w-32"
+                placeholder="20"
+              />
+              <span className="text-sm text-muted-foreground">coins</span>
+            </div>
+            <p className="text-xs text-amber-500">
+              Users need coins to read this chapter. Default: 20 coins
+            </p>
+          </div>
         )}
       </Card>
 

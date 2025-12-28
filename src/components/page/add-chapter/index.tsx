@@ -58,6 +58,7 @@ export default function AddChapterComponent() {
     chapterImagePreview: null as string | null,
     publishDate: new Date().toISOString().split("T")[0],
     isPremium: false,
+    priceInCoins: 20,
     language: "English",
     notes: "",
     content: "", // For inbuilt editor
@@ -142,7 +143,11 @@ export default function AddChapterComponent() {
   };
 
   const isStep3Valid = () => {
-    return chapterData.language && chapterData.publishDate;
+    return (
+      chapterData.language &&
+      chapterData.publishDate &&
+      (chapterData.isPremium ? chapterData.priceInCoins > 0 : true)
+    );
   };
 
   const canProceedToNext = (currentStep: string) => {
@@ -224,7 +229,10 @@ export default function AddChapterComponent() {
 
       // Optional fields
       if (chapterData.isPremium) {
-        formDataToSubmit.append("priceInCoins", "20");
+        formDataToSubmit.append(
+          "priceInCoins",
+          (chapterData.priceInCoins || 20).toString()
+        );
       }
       if (chapterData.notes) {
         formDataToSubmit.append("notes", chapterData.notes);

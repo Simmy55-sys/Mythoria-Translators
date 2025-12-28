@@ -24,8 +24,29 @@ import {
   updateSeriesAction,
   getSeriesByIdAction,
 } from "@/server-actions/translator";
-import RichTextEditor from "@/components/page/new-series/rich-text-editor";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/page/new-series/rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2 p-2 bg-slate-800/50 rounded-lg border border-border">
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="w-px h-6 bg-border mx-1" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+        </div>
+        <div className="border border-border rounded-lg bg-[#27272A] min-h-[150px] flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">Loading editor...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 import LoadingToast from "@/global/toasts/loading";
 import ErrorToast from "@/global/toasts/error";
 import SuccessToast from "@/global/toasts/success";

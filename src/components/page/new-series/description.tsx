@@ -1,5 +1,28 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
-import RichTextEditor from "./rich-text-editor";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(
+  () => import("./rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2 p-2 bg-slate-800/50 rounded-lg border border-border">
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="w-px h-6 bg-border mx-1" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+        </div>
+        <div className="border border-border rounded-lg bg-[#27272A] min-h-[150px] flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">Loading editor...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 export default function Description({
   description,

@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Bold, Italic, List, ListOrdered } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -18,6 +18,12 @@ export default function RichTextEditor({
   onChange,
   placeholder = "Write a compelling summary for your novel...",
 }: RichTextEditorProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -52,8 +58,21 @@ export default function RichTextEditor({
     }
   }, [content, editor]);
 
-  if (!editor) {
-    return null;
+  if (!isMounted || !editor) {
+    return (
+      <div className="space-y-2">
+        <div className="flex flex-wrap gap-2 p-2 bg-slate-800/50 rounded-lg border border-border">
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="w-px h-6 bg-border mx-1" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+          <div className="h-8 w-8 bg-muted rounded animate-pulse" />
+        </div>
+        <div className="border border-border rounded-lg bg-[#27272A] min-h-[150px] flex items-center justify-center">
+          <p className="text-muted-foreground text-sm">Loading editor...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

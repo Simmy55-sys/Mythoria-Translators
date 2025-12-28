@@ -266,7 +266,7 @@ export default function MagicRenderer({ content }: Props) {
 
                           {/* Message tail pointing left */}
                           <div
-                            className="absolute -left-2 top-4 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[10px]"
+                            className="absolute -left-2 top-4 w-0 h-0 border-t-10 border-t-transparent border-b-10 border-b-transparent border-r-10"
                             style={{
                               borderRightColor: speakerColor.tailColor,
                             }}
@@ -309,9 +309,9 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-yellow-900/50 via-amber-900/40 to-yellow-900/50 border-2 border-yellow-500/60 text-yellow-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden animate-pulse-glow"
+                  className="relative bg-linear-to-br from-yellow-900/50 via-amber-900/40 to-yellow-900/50 border-2 border-yellow-500/60 text-yellow-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden animate-pulse-glow"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent animate-golden-shimmer"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-yellow-400/30 to-transparent animate-golden-shimmer"></div>
                   <div className="relative z-10 font-semibold text-lg">
                     ⚡ {text}
                   </div>
@@ -322,7 +322,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-blue-950/80 via-purple-950/80 to-blue-950/80 border-2 border-blue-400/70 text-blue-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-blue-950/80 via-purple-950/80 to-blue-950/80 border-2 border-blue-400/70 text-blue-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
                 >
                   <div className="absolute inset-0 animate-flash"></div>
                   <div className="absolute inset-0">
@@ -349,7 +349,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-emerald-900/50 via-teal-900/40 to-emerald-900/50 border-2 border-emerald-400/60 text-emerald-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-emerald-900/50 via-teal-900/40 to-emerald-900/50 border-2 border-emerald-400/60 text-emerald-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
                 >
                   <div className="absolute inset-0 animate-scroll-effect"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -370,13 +370,13 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-slate-900/90 via-purple-900/50 to-slate-900/90 border-2 border-purple-400/60 text-purple-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-slate-900/90 via-purple-900/50 to-slate-900/90 border-2 border-purple-400/60 text-purple-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
                 >
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="absolute w-32 h-32 border-4 border-purple-400/40 rounded-full animate-portal-ring"></div>
                     <div className="absolute w-24 h-24 border-4 border-purple-500/50 rounded-full animate-portal-ring-delayed"></div>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/10 to-transparent animate-smoky"></div>
+                  <div className="absolute inset-0 bg-linear-to-b from-transparent via-purple-500/10 to-transparent animate-smoky"></div>
                   <div className="relative z-10 font-semibold">🌀 {text}</div>
                 </div>
               );
@@ -385,9 +385,9 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-indigo-900/60 via-purple-900/50 to-indigo-900/60 border-2 border-indigo-400/70 text-indigo-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-indigo-900/60 via-purple-900/50 to-indigo-900/60 border-2 border-indigo-400/70 text-indigo-200 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-400/20 to-transparent animate-arcane-glow"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-indigo-400/20 to-transparent animate-arcane-glow"></div>
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <span className="absolute top-2 left-6 text-indigo-400/40 text-2xl font-bold animate-glyph-float">
                       ⚛
@@ -412,7 +412,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90 border-4 border-cyan-400/70 text-cyan-200 px-5 py-4 rounded-lg shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-slate-800/90 via-slate-700/80 to-slate-800/90 border-4 border-cyan-400/70 text-cyan-200 px-5 py-4 rounded-lg shadow-2xl overflow-hidden"
                   style={{
                     boxShadow:
                       "0 0 20px rgba(34, 211, 238, 0.4), inset 0 0 20px rgba(34, 211, 238, 0.1)",
@@ -430,7 +430,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-red-950/80 via-orange-950/70 to-red-950/80 border-4 border-red-500/80 text-red-300 px-5 py-4 rounded-lg shadow-2xl overflow-hidden animate-vibration"
+                  className="relative bg-linear-to-br from-red-950/80 via-orange-950/70 to-red-950/80 border-4 border-red-500/80 text-red-300 px-5 py-4 rounded-lg shadow-2xl overflow-hidden animate-vibration"
                 >
                   <div className="relative z-10 font-black text-2xl tracking-wider">
                     💥 {text}
@@ -442,7 +442,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-blue-950/70 via-indigo-950/60 to-blue-950/70 border-2 border-blue-400/60 text-blue-200 px-5 py-4 rounded-xl shadow-xl overflow-hidden"
+                  className="relative bg-linear-to-br from-blue-950/70 via-indigo-950/60 to-blue-950/70 border-2 border-blue-400/60 text-blue-200 px-5 py-4 rounded-xl shadow-xl overflow-hidden"
                   style={{
                     animation: "stretch 3s ease-in-out infinite",
                   }}
@@ -457,7 +457,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-orange-900/60 via-red-900/50 to-orange-900/60 border-2 border-orange-400/60 text-orange-200 px-5 py-4 rounded-xl shadow-xl overflow-hidden"
+                  className="relative bg-linear-to-br from-orange-900/60 via-red-900/50 to-orange-900/60 border-2 border-orange-400/60 text-orange-200 px-5 py-4 rounded-xl shadow-xl overflow-hidden"
                 >
                   <div className="relative z-10 font-bold text-lg">
                     ⚔️ <span className="animate-combo-sequence">{text}</span>
@@ -469,7 +469,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-red-950/90 via-red-900/80 to-red-950/90 border-2 border-red-700/70 text-red-300 px-5 py-4 rounded-lg shadow-xl overflow-hidden"
+                  className="relative bg-linear-to-br from-red-950/90 via-red-900/80 to-red-950/90 border-2 border-red-700/70 text-red-300 px-5 py-4 rounded-lg shadow-xl overflow-hidden"
                 >
                   <div className="absolute inset-0">
                     <div className="absolute top-0 left-4 w-1 h-8 bg-red-600/60 animate-drip"></div>
@@ -485,9 +485,9 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-slate-950/95 via-slate-900/90 to-slate-950/95 border-2 border-slate-600/50 text-slate-400 px-5 py-4 rounded-xl shadow-xl overflow-hidden animate-fade-to-shadow"
+                  className="relative bg-linear-to-br from-slate-950/95 via-slate-900/90 to-slate-950/95 border-2 border-slate-600/50 text-slate-400 px-5 py-4 rounded-xl shadow-xl overflow-hidden animate-fade-to-shadow"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-800/30 to-transparent"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-slate-800/30 to-transparent"></div>
                   <div className="relative z-10 italic font-semibold">
                     🌑 {text}
                   </div>
@@ -514,7 +514,7 @@ export default function MagicRenderer({ content }: Props) {
                     textShadow: "0 0 20px rgba(139, 92, 246, 0.5)",
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-violet-500/20 to-transparent animate-shimmer"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-violet-500/20 to-transparent animate-shimmer"></div>
                   <div className="relative z-10 italic text-lg leading-relaxed">
                     🔮 {text}
                   </div>
@@ -533,7 +533,7 @@ export default function MagicRenderer({ content }: Props) {
                     boxShadow: "inset 0 0 50px rgba(0, 0, 0, 0.8)",
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-linear-to-b from-black/60 to-transparent"></div>
                   <div className="relative z-10 font-semibold">👁️ {text}</div>
                 </div>
               );
@@ -542,7 +542,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-yellow-100/20 via-amber-50/30 to-yellow-100/20 border-2 border-yellow-400/70 text-yellow-100 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
+                  className="relative bg-linear-to-br from-yellow-100/20 via-amber-50/30 to-yellow-100/20 border-2 border-yellow-400/70 text-yellow-100 px-5 py-4 rounded-xl shadow-2xl overflow-hidden"
                   style={{
                     fontFamily: "serif",
                     textShadow: "0 0 15px rgba(250, 204, 21, 0.6)",
@@ -565,7 +565,7 @@ export default function MagicRenderer({ content }: Props) {
                   key={index}
                   className="relative bg-slate-900/95 border-2 border-purple-800/60 text-purple-300 px-5 py-4 rounded-lg shadow-xl overflow-hidden animate-glitch"
                 >
-                  <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_50%,rgba(147,51,234,0.1)_50%,transparent_50%)] bg-[length:20px_100%] animate-static"></div>
+                  <div className="absolute inset-0 bg-[linear-linear(90deg,transparent_50%,rgba(147,51,234,0.1)_50%,transparent_50%)] bg-size-[20px_100%] animate-static"></div>
                   <div className="relative z-10 font-mono text-sm">
                     💀 {text}
                   </div>
@@ -581,7 +581,7 @@ export default function MagicRenderer({ content }: Props) {
                     filter: "sepia(40%) contrast(1.1)",
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-900/20 to-transparent blur-sm"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-amber-900/20 to-transparent blur-sm"></div>
                   <div className="absolute inset-0 border-4 border-amber-800/30 rounded-xl"></div>
                   <div className="relative z-10 italic">📸 {text}</div>
                 </div>
@@ -591,13 +591,13 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-gradient-to-br from-pink-900/30 via-purple-900/30 to-blue-900/30 border-2 border-pink-400/40 text-pink-200 px-5 py-4 rounded-2xl shadow-xl overflow-hidden"
+                  className="relative bg-linear-to-br from-pink-900/30 via-purple-900/30 to-blue-900/30 border-2 border-pink-400/40 text-pink-200 px-5 py-4 rounded-2xl shadow-xl overflow-hidden"
                   style={{
                     filter: "blur(0.5px)",
                     backdropFilter: "blur(2px)",
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 animate-soft-glow"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-pink-500/20 via-purple-500/20 to-blue-500/20 animate-soft-glow"></div>
                   <div className="relative z-10 italic text-lg leading-relaxed">
                     💭 {text}
                   </div>
@@ -629,7 +629,7 @@ export default function MagicRenderer({ content }: Props) {
                   key={index}
                   className="relative bg-yellow-900/40 border-2 border-yellow-500/60 text-yellow-200 px-5 py-4 rounded-xl shadow-lg overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent animate-shimmer"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-transparent via-yellow-400/30 to-transparent animate-shimmer"></div>
                   <div className="relative z-10 font-semibold">😊 {text}</div>
                 </div>
               );
@@ -664,7 +664,7 @@ export default function MagicRenderer({ content }: Props) {
                   key={index}
                   className="relative bg-red-950/80 border-2 border-red-600/80 text-red-400 px-5 py-4 rounded-lg shadow-xl overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-orange-600/30 to-red-600/20 animate-fire-flicker"></div>
+                  <div className="absolute inset-0 bg-linear-to-r from-red-600/20 via-orange-600/30 to-red-600/20 animate-fire-flicker"></div>
                   <div className="relative z-10 font-bold text-lg">
                     😡 {text}
                   </div>
@@ -744,8 +744,8 @@ export default function MagicRenderer({ content }: Props) {
                   {/* Speech bubble */}
                   <div className="bg-slate-800/80 border-2 border-blue-500/50 rounded-2xl px-5 py-4 shadow-lg relative">
                     {/* Tail pointing to avatar */}
-                    <div className="absolute -left-3 top-6 w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-r-[12px] border-r-slate-800/80"></div>
-                    <div className="absolute -left-[13px] top-6 w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-r-[12px] border-r-blue-500/50"></div>
+                    <div className="absolute -left-3 top-6 w-0 h-0 border-t-12 border-t-transparent border-b-12 border-b-transparent border-r-12 border-r-slate-800/80"></div>
+                    <div className="absolute -left-[13px] top-6 w-0 h-0 border-t-12 border-t-transparent border-b-12 border-b-transparent border-r-12 border-r-blue-500/50"></div>
 
                     <p className="text-white leading-relaxed text-base relative z-10">
                       {text}
