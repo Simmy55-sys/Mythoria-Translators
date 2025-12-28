@@ -136,16 +136,6 @@ export default function AddChapterStepTwo({
             >
               Direct Upload
             </button>
-            <button
-              onClick={() => updateChapterData({ fileSource: "gdrive" })}
-              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all block w-full ${
-                chapterData.fileSource === "gdrive"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              Google Drive Link
-            </button>
           </div>
 
           {chapterData.fileSource === "upload" ? (
@@ -167,33 +157,12 @@ export default function AddChapterStepTwo({
               </label>
             </div>
           ) : (
-            <>
-              {chapterData.fileSource === "gdrive" ? (
-                <Input
-                  placeholder="Paste your Google Drive link here"
-                  value={chapterData.fileUrl}
-                  onChange={(e) =>
-                    updateChapterData({ fileUrl: e.target.value })
-                  }
-                  className="border-[#27272A]"
-                />
-              ) : (
-                <div>
-                  {/* <textarea
-                    placeholder="Enter chapter content here..."
-                    value={chapterData.content || ""}
-                    onChange={(e) =>
-                      updateChapterData({ content: e.target.value })
-                    }
-                    className="w-full border border-[#27272A] rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none bg-[#27272A] min-h-64"
-                    rows={10}
-                  /> */}
-                  <InbuiltEditor
-                    onSave={(content) => updateChapterData({ content })}
-                  />
-                </div>
-              )}
-            </>
+            <div>
+              <InbuiltEditor
+                onSave={(content) => updateChapterData({ content })}
+                initialContent={chapterData.content || ""}
+              />
+            </div>
           )}
         </div>
       </div>

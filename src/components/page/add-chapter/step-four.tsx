@@ -98,8 +98,6 @@ export default function AddChapterStepFour({
             <p className="text-sm text-foreground">
               {chapterData.fileSource === "upload"
                 ? "Direct Upload"
-                : chapterData.fileSource === "gdrive"
-                ? "Google Drive Link"
                 : "Inbuilt Editor"}
             </p>
           </div>

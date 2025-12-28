@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -12,8 +13,10 @@ import InfoToast from "@/global/toasts/info";
 
 export default function MagicEditor({
   onSave,
+  initialContent = "",
 }: {
   onSave: (content: string) => void;
+  initialContent?: string;
 }) {
   const [previewMode, setPreviewMode] = useState(false);
 
@@ -31,9 +34,23 @@ export default function MagicEditor({
           "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[400px]",
       },
     },
-    content: "",
+    content: initialContent,
     immediatelyRender: false,
   });
+
+  // Update editor content when initialContent changes (for edit mode)
+  React.useEffect(() => {
+    if (editor && initialContent) {
+      const currentContent = editor.getText();
+      // Only update if content is different and editor is not focused (to avoid interrupting user)
+      if (
+        currentContent.trim() !== initialContent.trim() &&
+        !editor.isFocused
+      ) {
+        editor.commands.setContent(initialContent, { emitUpdate: false });
+      }
+    }
+  }, [editor, initialContent]);
 
   const saveHandler = () => {
     const text = editor?.getText() ?? "";

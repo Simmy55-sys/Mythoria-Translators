@@ -11,12 +11,15 @@ import AddChapterStepFour from "./step-four";
 import {
   getTranslatorSeriesAction,
   createChapterAction,
+  getChapterByIdAction,
+  updateChapterAction,
 } from "@/server-actions/translator";
 import { toast } from "sonner";
 import LoadingToast from "@/global/toasts/loading";
 import ErrorToast from "@/global/toasts/error";
 import SuccessToast from "@/global/toasts/success";
 import WarnToast from "@/global/toasts/warn";
+import { Spinner } from "@/components/ui/spinner";
 import { manageSeriesChapterDetail } from "@/routes/client";
 
 const { Stepper } = defineStepper(
@@ -44,10 +47,14 @@ const { Stepper } = defineStepper(
 
 export default function AddChapterComponent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [selectedSeries, setSelectedSeries] = useState<any>(null);
   const [seriesList, setSeriesList] = useState<any[]>([]);
   const [loadingSeries, setLoadingSeries] = useState(true);
+  const [loadingChapter, setLoadingChapter] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingChapterId, setEditingChapterId] = useState<string | null>(null);
   const [chapterData, setChapterData] = useState({
     chapterNumber: "",
     chapterTitle: "",
@@ -63,8 +70,6 @@ export default function AddChapterComponent() {
     notes: "",
     content: "", // For inbuilt editor
   });
-
-  const router = useRouter();
 
   // Load translator's series
   useEffect(() => {
@@ -120,6 +125,67 @@ export default function AddChapterComponent() {
     loadSeries();
   }, [searchParams]);
 
+  // Load chapter data if in edit mode
+  useEffect(() => {
+    const loadChapterData = async () => {
+      const editMode = searchParams.get("edit") === "true";
+      const chapterId = searchParams.get("chapterId");
+      const seriesId = searchParams.get("seriesId");
+
+      if (editMode && chapterId && seriesId) {
+        setIsEditMode(true);
+        setEditingChapterId(chapterId);
+        setLoadingChapter(true);
+
+        try {
+          const result = await getChapterByIdAction(seriesId, chapterId);
+          if (result.success && result.data) {
+            const chapter = result.data;
+            setChapterData({
+              chapterNumber: String(chapter.chapterNumber || ""),
+              chapterTitle: chapter.title || "",
+              fileSource: "inbuilt", // Always use inbuilt editor for editing
+              fileUrl: "",
+              chapterFile: null,
+              chapterImage: null,
+              chapterImagePreview: null,
+              publishDate: chapter.publishDate
+                ? new Date(chapter.publishDate).toISOString().split("T")[0]
+                : new Date().toISOString().split("T")[0],
+              isPremium: chapter.isPremium || false,
+              priceInCoins: chapter.priceInCoins || 20,
+              language: chapter.language || "English",
+              notes: chapter.notes || "",
+              content: chapter.content || "",
+            });
+          } else {
+            toast.custom(
+              (t) => (
+                <ErrorToast
+                  text={result.error || "Failed to load chapter data"}
+                  toastId={t}
+                />
+              ),
+              { duration: 5000 }
+            );
+          }
+        } catch (error) {
+          toast.custom(
+            (t) => (
+              <ErrorToast text="Failed to load chapter data" toastId={t} />
+            ),
+            { duration: 5000 }
+          );
+          console.error("Error loading chapter:", error);
+        } finally {
+          setLoadingChapter(false);
+        }
+      }
+    };
+
+    loadChapterData();
+  }, [searchParams]);
+
   // Validation functions for each step
   const isStep1Valid = () => {
     return selectedSeries !== null;
@@ -129,11 +195,12 @@ export default function AddChapterComponent() {
     if (!chapterData.chapterNumber || !chapterData.chapterTitle) {
       return false;
     }
-    // Check if content source is provided
-    if (chapterData.fileSource === "upload" && !chapterData.chapterFile) {
-      return false;
+    // In edit mode, content already exists, so we don't need to validate content source
+    if (isEditMode) {
+      return true;
     }
-    if (chapterData.fileSource === "gdrive" && !chapterData.fileUrl) {
+    // Check if content source is provided for new chapters
+    if (chapterData.fileSource === "upload" && !chapterData.chapterFile) {
       return false;
     }
     if (chapterData.fileSource === "inbuilt" && !chapterData.content) {
@@ -192,14 +259,84 @@ export default function AddChapterComponent() {
       (t) => {
         notificationId = t;
         return (
-          <LoadingToast text="Publishing chapter. This will be quick, please hold on" />
+          <LoadingToast
+            text={
+              isEditMode
+                ? "Updating chapter. This will be quick, please hold on"
+                : "Publishing chapter. This will be quick, please hold on"
+            }
+          />
         );
       },
       { duration: Infinity }
     );
 
     try {
-      // Create FormData for chapter creation
+      // Handle edit mode
+      if (isEditMode && editingChapterId) {
+        const updatePayload: {
+          title?: string;
+          content?: string;
+          isPremium?: boolean;
+          publishDate?: string;
+          language?: string;
+          priceInCoins?: number;
+          chapterNumber?: number;
+          notes?: string;
+        } = {
+          title: chapterData.chapterTitle,
+          chapterNumber: parseInt(chapterData.chapterNumber, 10),
+          publishDate: new Date(chapterData.publishDate).toISOString(),
+          language: chapterData.language,
+          isPremium: chapterData.isPremium,
+        };
+
+        if (chapterData.fileSource === "inbuilt") {
+          updatePayload.content = chapterData.content;
+        }
+        // Note: File upload updates are not supported in edit mode
+        // User would need to use inbuilt editor
+
+        if (chapterData.isPremium) {
+          updatePayload.priceInCoins = chapterData.priceInCoins || 20;
+        }
+        if (chapterData.notes) {
+          updatePayload.notes = chapterData.notes;
+        }
+
+        const result = await updateChapterAction(
+          selectedSeries.id,
+          editingChapterId,
+          updatePayload
+        );
+
+        if (!result.success) {
+          toast.custom(
+            (t) => (
+              <ErrorToast
+                text={result.error || "Failed to update chapter."}
+                toastId={t}
+              />
+            ),
+            { id: notificationId }
+          );
+          return;
+        }
+
+        toast.custom(
+          (t) => (
+            <SuccessToast text="Chapter updated successfully!" toastId={t} />
+          ),
+          { id: notificationId }
+        );
+
+        router.push(
+          manageSeriesChapterDetail(selectedSeries.id, editingChapterId)
+        );
+        return;
+      }
+
+      // Create new chapter
       const formDataToSubmit = new FormData();
 
       // Add all chapter data to FormData
@@ -219,9 +356,6 @@ export default function AddChapterComponent() {
         // For file upload, content can be empty or a placeholder
         // Server will extract the actual content from the file
         formDataToSubmit.append("content", "");
-      } else if (chapterData.fileSource === "gdrive") {
-        // Google Drive link - send as content
-        formDataToSubmit.append("content", chapterData.fileUrl);
       } else {
         // Inbuilt editor - send text content
         formDataToSubmit.append("content", chapterData.content);
@@ -302,14 +436,42 @@ export default function AddChapterComponent() {
     setChapterData({ ...chapterData, ...updates });
   };
 
+  if (loadingChapter) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center flex items-center gap-2">
+            <Spinner />
+            <p className="text-muted-foreground">Loading chapter data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {isEditMode && (
+        <div className="mb-6 p-4 bg-card border border-primary/50 rounded-lg">
+          <h2 className="text-xl font-semibold mb-2 text-foreground">
+            Edit Chapter
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Editing chapter in:{" "}
+            <span className="font-medium">{selectedSeries?.title}</span>
+          </p>
+        </div>
+      )}
       <Stepper.Provider className="space-y-4" variant="circle">
         {({ methods }) => (
           <React.Fragment>
             <Stepper.Navigation>
               <Stepper.Step of={methods.current.id}>
-                <Stepper.Title>{methods.current.title}</Stepper.Title>
+                <Stepper.Title>
+                  {isEditMode && methods.current.id === "step-1"
+                    ? "Edit Chapter"
+                    : methods.current.title}
+                </Stepper.Title>
                 <Stepper.Description className="wrap-break-word max-w-full min-w-0">
                   {methods.current.description}
                 </Stepper.Description>
@@ -317,13 +479,25 @@ export default function AddChapterComponent() {
             </Stepper.Navigation>
             {methods.when(methods.current.id, () => (
               <Stepper.Panel className="mt-10 mb-8">
-                {methods.current.id === "step-1" && (
+                {methods.current.id === "step-1" && !isEditMode && (
                   <AddChapterStepOne
                     selectedSeries={selectedSeries}
                     onSelectSeries={setSelectedSeries}
                     seriesList={seriesList}
                     loadingSeries={loadingSeries}
                   />
+                )}
+                {methods.current.id === "step-1" && isEditMode && (
+                  <div className="p-6 bg-card border border-border rounded-lg">
+                    <p className="text-foreground mb-2">
+                      <span className="font-semibold">Series:</span>{" "}
+                      {selectedSeries?.title}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      You are editing a chapter in this series. Click Continue
+                      to proceed to chapter details.
+                    </p>
+                  </div>
                 )}
                 {methods.current.id === "step-2" && (
                   <AddChapterStepTwo
@@ -380,9 +554,13 @@ export default function AddChapterComponent() {
                 disabled={publishing || (methods.isLast && !isStep2Valid())}
               >
                 {publishing
-                  ? "Publishing..."
+                  ? isEditMode
+                    ? "Updating..."
+                    : "Publishing..."
                   : methods.isLast
-                  ? "Publish Chapter"
+                  ? isEditMode
+                    ? "Update Chapter"
+                    : "Publish Chapter"
                   : "Continue"}
               </Button>
             </Stepper.Controls>
