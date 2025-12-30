@@ -47,8 +47,10 @@ interface ChapterItem {
   chapterTitle: string;
   chapterFile: File | null;
   content: string;
-  fileSource: "upload" | "inbuilt" | "gdrive";
+  fileSource: "upload" | "inbuilt";
   fileUrl: string;
+  isPremium: boolean;
+  priceInCoins: number;
 }
 
 export default function AddBulkChaptersComponent() {
@@ -134,6 +136,8 @@ export default function AddBulkChaptersComponent() {
       content: "",
       fileSource: "upload",
       fileUrl: "",
+      isPremium: bulkSettings.isPremium,
+      priceInCoins: 20,
     };
     setChapters([...chapters, newChapter]);
     setNextChapterNumber(String(parseInt(nextChapterNumber) + 1));
@@ -167,6 +171,8 @@ export default function AddBulkChaptersComponent() {
         content: "",
         fileSource: "upload",
         fileUrl: "",
+        isPremium: bulkSettings.isPremium,
+        priceInCoins: 20,
       });
     });
 
@@ -185,7 +191,8 @@ export default function AddBulkChaptersComponent() {
       (ch) =>
         ch.chapterNumber &&
         ch.chapterTitle &&
-        (ch.chapterFile || ch.content || ch.fileUrl)
+        (ch.chapterFile || ch.content) &&
+        (!ch.isPremium || (ch.isPremium && ch.priceInCoins > 0))
     );
   };
 
@@ -261,16 +268,21 @@ export default function AddBulkChaptersComponent() {
           formDataToSubmit.append("language", bulkSettings.language);
           formDataToSubmit.append(
             "isPremium",
-            bulkSettings.isPremium.toString()
+            chapter.isPremium.toString()
           );
 
           if (chapter.fileSource === "upload" && chapter.chapterFile) {
             formDataToSubmit.append("chapterFile", chapter.chapterFile);
             formDataToSubmit.append("content", "");
-          } else if (chapter.fileSource === "gdrive") {
-            formDataToSubmit.append("content", chapter.fileUrl);
           } else {
             formDataToSubmit.append("content", chapter.content);
+          }
+
+          if (chapter.isPremium) {
+            formDataToSubmit.append(
+              "priceInCoins",
+              (chapter.priceInCoins || 20).toString()
+            );
           }
 
           if (bulkSettings.isPremium) {

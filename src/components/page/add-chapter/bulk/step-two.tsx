@@ -1,14 +1,29 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { FileTextIcon, PlusIcon, UploadIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CircleAlertIcon } from "lucide-react";
 import { X } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Dynamically import InbuiltEditor with SSR disabled
+const InbuiltEditor = dynamic(
+  () => import("../../add-chapter/global/inbuilt-editor"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[400px] bg-[#27272A] border border-border rounded-lg flex items-center justify-center text-muted-foreground">
+        Loading editor...
+      </div>
+    ),
+  }
+);
 
 export default function AddBulkChaptersStepTwo({
   selectedSeries,
@@ -213,21 +228,6 @@ export default function AddBulkChaptersStepTwo({
                   >
                     Inbuilt Editor
                   </button>
-                  <button
-                    onClick={() =>
-                      updateChapter(chapter.id, {
-                        fileSource: "gdrive",
-                      })
-                    }
-                    className={cn(
-                      "flex-1 py-2 px-4 rounded-lg font-medium transition-all block w-full",
-                      chapter.fileSource === "gdrive"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                    )}
-                  >
-                    Google Drive
-                  </button>
                 </div>
               </div>
 
@@ -259,39 +259,98 @@ export default function AddBulkChaptersStepTwo({
                   </div>
                 )}
 
-                {chapter.fileSource === "gdrive" && (
-                  <div>
-                    <label className="block text-sm font-medium mb-2 text-foreground">
-                      Google Drive Link
-                    </label>
-                    <Input
-                      placeholder="https://drive.google.com/..."
-                      value={chapter.fileUrl}
-                      onChange={(e) =>
-                        updateChapter(chapter.id, {
-                          fileUrl: e.target.value,
-                        })
-                      }
-                      className="border-[#27272A]"
-                    />
-                  </div>
-                )}
-
                 {chapter.fileSource === "inbuilt" && (
                   <div>
                     <label className="block text-sm font-medium mb-2 text-foreground">
                       Chapter Content
                     </label>
-                    <Textarea
-                      placeholder="Write your chapter content here..."
-                      value={chapter.content}
-                      onChange={(e) =>
+                    <InbuiltEditor
+                      onSave={(content) =>
                         updateChapter(chapter.id, {
-                          content: e.target.value,
+                          content,
                         })
                       }
-                      className="border-[#27272A] min-h-32 resize-none"
+                      initialContent={chapter.content || ""}
                     />
+                  </div>
+                )}
+              </div>
+
+              {/* Premium Settings */}
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2 text-foreground">
+                  Chapter Type
+                </label>
+                <div className="flex max-md:flex-col items-center gap-4">
+                  <button
+                    onClick={() =>
+                      updateChapter(chapter.id, {
+                        isPremium: false,
+                      })
+                    }
+                    className={cn(
+                      "flex-1 py-3 px-4 rounded-lg font-medium transition-all block w-full",
+                      !chapter.isPremium
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                  >
+                    Free Chapter
+                  </button>
+                  <button
+                    onClick={() =>
+                      updateChapter(chapter.id, {
+                        isPremium: true,
+                      })
+                    }
+                    className={cn(
+                      "flex-1 py-3 px-4 rounded-lg font-medium transition-all block w-full",
+                      chapter.isPremium
+                        ? "bg-secondary text-secondary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    )}
+                  >
+                    Premium Chapter
+                  </button>
+                </div>
+
+                {chapter.isPremium && (
+                  <div className="mt-4 space-y-2">
+                    <label
+                      htmlFor={`priceInCoins-${chapter.id}`}
+                      className="block text-sm font-medium text-foreground"
+                    >
+                      Coin Price
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        id={`priceInCoins-${chapter.id}`}
+                        type="number"
+                        min="1"
+                        step="1"
+                        value={chapter.priceInCoins || ""}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value, 10);
+                          if (!isNaN(value) && value > 0) {
+                            updateChapter(chapter.id, {
+                              priceInCoins: value,
+                            });
+                          } else if (e.target.value === "") {
+                            updateChapter(chapter.id, {
+                              priceInCoins: 0,
+                            });
+                          }
+                        }}
+                        className="border-[#27272A] w-32"
+                        placeholder="20"
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        coins
+                      </span>
+                    </div>
+                    <p className="text-xs text-amber-500">
+                      Users need coins to read this chapter. Default: 20 coins
+                    </p>
                   </div>
                 )}
               </div>

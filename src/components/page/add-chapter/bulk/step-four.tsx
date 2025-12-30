@@ -59,9 +59,11 @@ export default function AddBulkChaptersStepFour({
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Chapter Type</p>
+              <p className="text-xs text-muted-foreground mb-1">
+                Premium Chapters
+              </p>
               <p className="font-semibold text-foreground">
-                {bulkSettings.isPremium ? "Premium" : "Free"}
+                {chapters.filter((ch) => ch.isPremium).length} / {chapters.length}
               </p>
             </div>
           </div>
@@ -91,14 +93,19 @@ export default function AddBulkChaptersStepFour({
                   Chapter {chapter.chapterNumber}:{" "}
                   {chapter.chapterTitle || "Untitled"}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Source:{" "}
-                  {chapter.fileSource === "upload"
-                    ? "File Upload"
-                    : chapter.fileSource === "gdrive"
-                    ? "Google Drive"
-                    : "Inbuilt Editor"}
-                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-xs text-muted-foreground">
+                    Source:{" "}
+                    {chapter.fileSource === "upload"
+                      ? "File Upload"
+                      : "Inbuilt Editor"}
+                  </p>
+                  {chapter.isPremium && (
+                    <span className="text-xs px-2 py-0.5 bg-secondary/20 text-secondary rounded">
+                      Premium ({chapter.priceInCoins || 20} coins)
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
