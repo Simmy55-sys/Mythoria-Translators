@@ -63,7 +63,8 @@ export default function AddBulkChaptersStepFour({
                 Premium Chapters
               </p>
               <p className="font-semibold text-foreground">
-                {chapters.filter((ch) => ch.isPremium).length} / {chapters.length}
+                {chapters.filter((ch) => ch.isPremium).length} /{" "}
+                {chapters.length}
               </p>
             </div>
           </div>

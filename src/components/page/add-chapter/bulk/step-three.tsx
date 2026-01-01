@@ -80,7 +80,7 @@ export default function AddBulkChaptersStepThree({
             </Select>
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium mb-2 text-foreground">
               Chapter Type
             </label>
@@ -123,7 +123,7 @@ export default function AddBulkChaptersStepThree({
                 Users need coins to read these chapters
               </p>
             )}
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium mb-2 text-foreground">

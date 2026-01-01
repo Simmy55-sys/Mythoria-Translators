@@ -266,10 +266,7 @@ export default function AddBulkChaptersComponent() {
             new Date(bulkSettings.publishDate).toISOString()
           );
           formDataToSubmit.append("language", bulkSettings.language);
-          formDataToSubmit.append(
-            "isPremium",
-            chapter.isPremium.toString()
-          );
+          formDataToSubmit.append("isPremium", chapter.isPremium.toString());
 
           if (chapter.fileSource === "upload" && chapter.chapterFile) {
             formDataToSubmit.append("chapterFile", chapter.chapterFile);
@@ -285,9 +282,10 @@ export default function AddBulkChaptersComponent() {
             );
           }
 
-          if (bulkSettings.isPremium) {
-            formDataToSubmit.append("priceInCoins", "20");
-          }
+          // if (bulkSettings.isPremium) {
+          //   formDataToSubmit.append("priceInCoins", "20");
+          // }
+
           if (bulkSettings.notes) {
             formDataToSubmit.append("notes", bulkSettings.notes);
           }
