@@ -38,16 +38,68 @@ export default function MagicEditor({
     immediatelyRender: false,
   });
 
+  // Helper function to convert plain text with line breaks to HTML
+  const convertTextToHTML = (text: string): string => {
+    if (!text) return "";
+    
+    // Check if it's already HTML
+    if (text.trim().startsWith("<")) {
+      return text;
+    }
+    
+    // Convert plain text with line breaks to HTML
+    // Split by lines and preserve structure
+    const lines = text.split(/\n/);
+    const result: string[] = [];
+    let currentParagraph: string[] = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      // Empty line indicates a new paragraph
+      if (line === "") {
+        if (currentParagraph.length > 0) {
+          result.push(`<p>${currentParagraph.join("<br>")}</p>`);
+          currentParagraph = [];
+        }
+        // Add an empty paragraph for spacing
+        if (i < lines.length - 1 && lines[i + 1]?.trim()) {
+          result.push("<p></p>");
+        }
+      } else {
+        // Add line to current paragraph
+        currentParagraph.push(line);
+      }
+    }
+    
+    // Add remaining paragraph
+    if (currentParagraph.length > 0) {
+      result.push(`<p>${currentParagraph.join("<br>")}</p>`);
+    }
+    
+    return result.length > 0 ? result.join("") : "";
+  };
+
   // Update editor content when initialContent changes (for edit mode)
   React.useEffect(() => {
     if (editor && initialContent) {
-      const currentContent = editor.getText();
-      // Only update if content is different and editor is not focused (to avoid interrupting user)
-      if (
-        currentContent.trim() !== initialContent.trim() &&
-        !editor.isFocused
-      ) {
-        editor.commands.setContent(initialContent, { emitUpdate: false });
+      // Use a flag to track if we've loaded initial content
+      const hasLoaded = (editor as any).__hasLoadedInitialContent;
+      
+      if (!hasLoaded && initialContent.trim()) {
+        // Convert plain text to HTML to preserve line breaks
+        const htmlContent = convertTextToHTML(initialContent);
+        editor.commands.setContent(htmlContent, { emitUpdate: false });
+        (editor as any).__hasLoadedInitialContent = true;
+      } else if (hasLoaded && !editor.isFocused) {
+        // Only update if content changed externally and editor is not focused
+        const currentText = editor.getText().trim();
+        const initialText = initialContent.trim();
+        
+        if (currentText !== initialText && initialText) {
+          const htmlContent = convertTextToHTML(initialContent);
+          editor.commands.setContent(htmlContent, { emitUpdate: false });
+        }
       }
     }
   }, [editor, initialContent]);

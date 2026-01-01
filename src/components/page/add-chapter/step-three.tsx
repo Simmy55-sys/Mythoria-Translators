@@ -48,6 +48,7 @@ export default function AddChapterStepThree({
               Language
             </label>
             <Select
+              value={chapterData.language || "english"}
               onValueChange={(value) => updateChapterData({ language: value })}
             >
               <SelectTrigger
@@ -88,7 +89,7 @@ export default function AddChapterStepThree({
 
         <div className="flex max-md:flex-col items-center gap-4">
           <button
-            onClick={() => updateChapterData({ isPremium: false })}
+            onClick={() => updateChapterData({ isPremium: false, priceInCoins: 0 })}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all block w-full ${
               !chapterData.isPremium
                 ? "bg-primary text-primary-foreground"
@@ -98,7 +99,7 @@ export default function AddChapterStepThree({
             Free Chapter
           </button>
           <button
-            onClick={() => updateChapterData({ isPremium: true })}
+            onClick={() => updateChapterData({ isPremium: true, priceInCoins: chapterData.priceInCoins || 20 })}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all block w-full ${
               chapterData.isPremium
                 ? "bg-secondary text-secondary-foreground"
@@ -123,13 +124,13 @@ export default function AddChapterStepThree({
                 type="number"
                 min="1"
                 step="1"
-                value={chapterData.priceInCoins || ""}
+                value={chapterData.priceInCoins || 20}
                 onChange={(e) => {
                   const value = parseInt(e.target.value, 10);
                   if (!isNaN(value) && value > 0) {
                     updateChapterData({ priceInCoins: value });
                   } else if (e.target.value === "") {
-                    updateChapterData({ priceInCoins: 0 });
+                    updateChapterData({ priceInCoins: 20 });
                   }
                 }}
                 className="border-[#27272A] w-32"
@@ -141,6 +142,12 @@ export default function AddChapterStepThree({
               Users need coins to read this chapter. Default: 20 coins
             </p>
           </div>
+        )}
+        
+        {!chapterData.isPremium && (
+          <p className="text-xs text-muted-foreground mt-2">
+            Free chapters are accessible to all users without any coin requirement.
+          </p>
         )}
       </Card>
 

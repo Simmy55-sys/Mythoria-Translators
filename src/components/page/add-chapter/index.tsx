@@ -154,7 +154,7 @@ export default function AddChapterComponent() {
                 : new Date().toISOString().split("T")[0],
               isPremium: chapter.isPremium || false,
               priceInCoins: chapter.priceInCoins || 20,
-              language: chapter.language || "English",
+              language: (chapter.language || "english").toLowerCase(),
               notes: chapter.notes || "",
               content: chapter.content || "",
             });
@@ -297,9 +297,15 @@ export default function AddChapterComponent() {
         // Note: File upload updates are not supported in edit mode
         // User would need to use inbuilt editor
 
+        // Always include isPremium to allow switching between premium and free
+        // If switching to free, priceInCoins should not be included or set to 0
         if (chapterData.isPremium) {
           updatePayload.priceInCoins = chapterData.priceInCoins || 20;
+        } else {
+          // Explicitly set priceInCoins to 0 or undefined when switching to free
+          updatePayload.priceInCoins = 0;
         }
+
         if (chapterData.notes) {
           updatePayload.notes = chapterData.notes;
         }
