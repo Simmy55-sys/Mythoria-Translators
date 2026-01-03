@@ -133,7 +133,7 @@ export default function ManageSeriesComponent() {
                   <Image
                     src={item.image || "/placeholder.svg"}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    className="w-full h-full object-cover max-sm:object-contain group-hover:scale-105 transition duration-300"
                     width={100}
                     height={100}
                     quality={100}
@@ -261,7 +261,9 @@ export default function ManageSeriesComponent() {
                     (item: SeriesResponse) => ({
                       id: item.id,
                       title: item.title,
-                      slug: item.slug || item.title.toLowerCase().replace(/\s+/g, "-"),
+                      slug:
+                        item.slug ||
+                        item.title.toLowerCase().replace(/\s+/g, "-"),
                       image: item.featuredImage || "/placeholder.svg",
                       chapters: item.chapters || 0,
                       status: item.status || "ongoing",

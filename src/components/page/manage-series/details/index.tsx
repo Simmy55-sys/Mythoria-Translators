@@ -75,6 +75,7 @@ interface ChapterResponse {
   chapterNumber: number;
   publishDate: string;
   isPremium: boolean;
+  readCount: number;
 }
 
 export default function ManageSeriesDetailsComponent({
@@ -125,7 +126,7 @@ export default function ManageSeriesDetailsComponent({
             title: ch.title,
             date: new Date(ch.publishDate).toLocaleDateString(),
             status: "published" as const, // All chapters from backend are published
-            views: 0, // Not available from backend yet
+            views: ch.readCount || 0,
             locked: ch.isPremium,
           })
         );
