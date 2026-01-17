@@ -29,7 +29,7 @@ class ApiClient {
   }
 
   /**
-   * Make a request to hustle-pay's backend server.
+   * Make a request to mythoria's backend server.
    *
    * @param method - HTTP method
    * @param endpoint - API endpoint

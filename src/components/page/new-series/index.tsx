@@ -1,6 +1,6 @@
 "use client";
 
-// Fix the image upload (use the hustlepay's example)
+// Fix the image upload (use the mythoria's example)
 import { useState } from "react";
 import {
   getAssignmentAction,

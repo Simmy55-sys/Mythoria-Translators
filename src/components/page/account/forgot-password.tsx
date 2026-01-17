@@ -83,7 +83,8 @@ export function ForgotPasswordForm({
             <div className="space-y-4">
               <div className="rounded-lg bg-green-500/10 border border-green-500/20 p-3 text-sm text-green-500">
                 If an account with that email exists, a password reset link has
-                been sent. Please check your email.
+                been sent. Please check your email. This may take a few minutes to arrive.
+                If you don't receive an email, please check your spam folder or contact support.
               </div>
               <Field>
                 <Button
