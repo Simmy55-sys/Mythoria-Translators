@@ -5,6 +5,8 @@ export const bulkChapters = newChapter + "/bulk";
 export const bulkSeries = "/add-bulk-series";
 
 export const login = "/account/login";
+export const forgotPassword = "/account/forgot-password";
+export const resetPassword = "/account/reset-password";
 
 export const manageSeries = "/manage";
 export const manageSeriesDetail = (series: string) =>

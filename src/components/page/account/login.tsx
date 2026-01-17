@@ -19,8 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import { LoginUserAction } from "@/server-actions/authentication";
-import { dashboard } from "@/routes/client";
+import { dashboard, forgotPassword } from "@/routes/client";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export function LoginForm({
   className,
@@ -101,7 +102,15 @@ export function LoginForm({
               <Field>
                 <Field className="grid gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <div className="flex items-center justify-between">
+                      <FieldLabel htmlFor="password">Password</FieldLabel>
+                      <Link
+                        href={forgotPassword}
+                        className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
                     <div className="relative">
                       <Input
                         id="password"

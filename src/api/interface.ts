@@ -1,5 +1,12 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { assignment, seriesCreate, translatorLogin } from "@/routes/server";
+import {
+  assignment,
+  seriesCreate,
+  translatorLogin,
+  translatorForgotPasswordRoute,
+  translatorResetPasswordRoute,
+  translatorValidateResetTokenRoute,
+} from "@/routes/server";
 import {
   ApiResponse,
   AssignmentResponse,
@@ -102,6 +109,38 @@ class ApiClient {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+    });
+  }
+
+  /**
+   * Request password reset for translator
+   */
+  async forgotPassword(email: string) {
+    return this.execute<{ message: string }>({
+      method: "POST",
+      endpoint: translatorForgotPasswordRoute,
+      data: { email },
+    });
+  }
+
+  /**
+   * Reset password with token for translator
+   */
+  async resetPassword(token: string, newPassword: string) {
+    return this.execute<{ message: string }>({
+      method: "POST",
+      endpoint: translatorResetPasswordRoute,
+      data: { token, newPassword },
+    });
+  }
+
+  /**
+   * Validate reset token for translator
+   */
+  async validateResetToken(token: string) {
+    return this.execute<{ valid: boolean; message?: string }>({
+      method: "GET",
+      endpoint: `${translatorValidateResetTokenRoute}?token=${encodeURIComponent(token)}`,
     });
   }
 

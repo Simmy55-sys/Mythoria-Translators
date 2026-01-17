@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ACCESS_TOKEN_COOKIE_ID } from "@/global/utils";
-import { login, dashboard } from "@/routes/client";
+import {
+  login,
+  dashboard,
+  forgotPassword,
+  resetPassword,
+} from "@/routes/client";
 import { profile } from "./routes/server";
 
 export default async function middleware(request: NextRequest) {
@@ -11,7 +16,12 @@ export default async function middleware(request: NextRequest) {
 
   // If no token, redirect to login (unless already on login page)
   if (!accessToken) {
-    if (pathname === login) return NextResponse.next();
+    if (
+      pathname === login ||
+      pathname === forgotPassword ||
+      pathname === resetPassword
+    )
+      return NextResponse.next();
 
     const loginUrl = new URL(login, request.url);
     loginUrl.searchParams.set("redirect", pathname);
@@ -40,7 +50,12 @@ export default async function middleware(request: NextRequest) {
     } else {
       // Profile request failed, token is invalid
       // Clear the cookie and redirect to login
-      const loginUrl = new URL(login, request.url);
+      let loginUrl = new URL(login, request.url);
+      if (pathname === forgotPassword) {
+        loginUrl = new URL(forgotPassword, request.url);
+      } else if (pathname === resetPassword) {
+        loginUrl = new URL(resetPassword, request.url);
+      }
       loginUrl.searchParams.set("redirect", pathname);
       const response = NextResponse.redirect(loginUrl);
       response.cookies.delete(ACCESS_TOKEN_COOKIE_ID);

@@ -6,3 +6,7 @@ export const createChapter = (seriesId: string) =>
 export const assignment = (assignmentId: string) =>
   `/translator/assignment/${assignmentId}`;
 export const seriesCreate = "/translator/series/create";
+export const translatorForgotPasswordRoute = "/account/translator/forgot-password";
+export const translatorResetPasswordRoute = "/account/translator/reset-password";
+export const translatorValidateResetTokenRoute =
+  "/account/translator/validate-reset-token";
