@@ -161,6 +161,7 @@ export default function AddChapterStepTwo({
               <InbuiltEditor
                 onSave={(content) => updateChapterData({ content })}
                 initialContent={chapterData.content || ""}
+                onImagesReady={(images) => updateChapterData({ images })}
               />
             </div>
           )}

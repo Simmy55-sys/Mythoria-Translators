@@ -140,7 +140,9 @@ class ApiClient {
   async validateResetToken(token: string) {
     return this.execute<{ valid: boolean; message?: string }>({
       method: "GET",
-      endpoint: `${translatorValidateResetTokenRoute}?token=${encodeURIComponent(token)}`,
+      endpoint: `${translatorValidateResetTokenRoute}?token=${encodeURIComponent(
+        token
+      )}`,
     });
   }
 
@@ -449,6 +451,17 @@ class ApiClient {
     }>({
       method: "GET",
       endpoint: `/translator/dashboard/earnings${params}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  async uploadImage(formData: FormData, accessToken: string) {
+    return this.execute<{ url: string }>({
+      method: "POST",
+      endpoint: "/translator/upload-image",
+      data: formData,
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -413,3 +413,32 @@ export async function getEarningsDataAction(year?: number) {
     data: response.data,
   } as const;
 }
+
+export async function uploadImageAction(file: File) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_TOKEN_COOKIE_ID)?.value;
+
+  if (!accessToken) {
+    return {
+      success: false,
+      error: "Not authenticated",
+    } as const;
+  }
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await apiClientManager.uploadImage(formData, accessToken);
+
+  if (!response.success) {
+    return {
+      success: false,
+      error: response.error.message,
+    } as const;
+  }
+
+  return {
+    success: true,
+    data: response.data,
+  } as const;
+}

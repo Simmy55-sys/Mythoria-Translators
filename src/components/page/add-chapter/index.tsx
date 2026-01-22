@@ -13,6 +13,7 @@ import {
   createChapterAction,
   getChapterByIdAction,
   updateChapterAction,
+  uploadImageAction,
 } from "@/server-actions/translator";
 import { toast } from "sonner";
 import LoadingToast from "@/global/toasts/loading";
@@ -69,6 +70,7 @@ export default function AddChapterComponent() {
     language: "English",
     notes: "",
     content: "", // For inbuilt editor
+    images: [] as Array<{ src: string; file: File; alt?: string }>, // Images from editor
   });
 
   // Load translator's series
@@ -157,7 +159,7 @@ export default function AddChapterComponent() {
               language: (chapter.language || "english").toLowerCase(),
               notes: chapter.notes || "",
               content: chapter.content || "",
-            });
+            } as any);
           } else {
             toast.custom(
               (t) => (
@@ -363,7 +365,8 @@ export default function AddChapterComponent() {
         // Server will extract the actual content from the file
         formDataToSubmit.append("content", "");
       } else {
-        // Inbuilt editor - send text content
+        // Inbuilt editor - content should already have Cloudinary URLs from save
+        // Images are uploaded when user clicks "Save Chapter" button
         formDataToSubmit.append("content", chapterData.content);
       }
 

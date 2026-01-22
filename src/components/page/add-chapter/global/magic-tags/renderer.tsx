@@ -251,6 +251,40 @@ export default function MagicRenderer({ content }: Props) {
   return (
     <div className="space-y-4 leading-relaxed text-[1.15rem]">
       {lines.map((line, index) => {
+        // IMAGE - Handle markdown image syntax ![alt](url) - check early
+        const imageMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/);
+        if (imageMatch) {
+          const alt = imageMatch[1] || "";
+          const url = imageMatch[2];
+          
+          // Check if there's text before or after the image
+          const beforeImage = line.substring(0, imageMatch.index || 0).trim();
+          const afterImage = line.substring((imageMatch.index || 0) + imageMatch[0].length).trim();
+          
+          return (
+            <div key={index} className="my-6">
+              {beforeImage && (
+                <p className="mb-4">{parseFormattedText(beforeImage)}</p>
+              )}
+              <div className="flex justify-center">
+                <img
+                  src={url}
+                  alt={alt}
+                  className="max-w-xs h-auto rounded-lg mx-auto block"
+                  onError={(e) => {
+                    // Fallback if image fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                  }}
+                />
+              </div>
+              {afterImage && (
+                <p className="mt-4">{parseFormattedText(afterImage)}</p>
+              )}
+            </div>
+          );
+        }
+
         // Check if this line contains a conversation placeholder
         if (line.includes("__CONVERSATION_")) {
           const convIdx = parseInt(
