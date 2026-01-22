@@ -8,6 +8,8 @@ export const login = "/account/login";
 export const forgotPassword = "/account/forgot-password";
 export const resetPassword = "/account/reset-password";
 
+export const editor = "/editor";
+
 export const manageSeries = "/manage";
 export const manageSeriesDetail = (series: string) =>
   `/manage/series/${series}`;

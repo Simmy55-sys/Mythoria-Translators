@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { IconSettings, IconHelp, IconSearch } from "@tabler/icons-react";
+import {
+  IconSettings,
+  IconHelp,
+  IconSearch,
+  IconFileText,
+} from "@tabler/icons-react";
 import { toast } from "sonner";
 import InfoToast from "@/global/toasts/info";
 
@@ -12,12 +17,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { editor } from "@/routes/client";
 
 const items = [
   {
-    title: "Settings",
-    url: "#",
-    icon: IconSettings,
+    title: "Editor",
+    url: editor,
+    icon: IconFileText,
     isImplemented: false,
   },
   {

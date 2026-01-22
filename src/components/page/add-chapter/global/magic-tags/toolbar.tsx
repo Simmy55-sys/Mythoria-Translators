@@ -78,15 +78,46 @@ export default function Toolbar({ editor }: ToolbarProps) {
 
   if (!editor) return null;
 
+  // Helper function to get selected text
+  const getSelectedText = (): string => {
+    const { from, to } = editor.state.selection;
+    if (from === to) return ""; // No selection
+    return editor.state.doc.textBetween(from, to, " ");
+  };
+
+  // Helper function to wrap selected text with a tag
+  const wrapSelectedText = (tag: string, type?: string, speaker?: string) => {
+    const selectedText = getSelectedText();
+    
+    // Build the tag content
+    let tagContent = "";
+    if (tag === "dialogue" && speaker) {
+      tagContent = `[dialogue speaker="${speaker}"]${selectedText}[/dialogue]`;
+    } else if (tag === "event" && type) {
+      tagContent = `[event type="${type}"]${selectedText}[/event]`;
+    } else {
+      tagContent = `[${tag}]${selectedText}[/${tag}]`;
+    }
+    
+    // insertContent automatically replaces selected text
+    editor.chain().focus().insertContent(tagContent).run();
+  };
+
   const insertDialogue = () => {
+    const selectedText = getSelectedText();
     const speaker = prompt("Enter speaker name:");
     if (speaker) {
-      const text = prompt(`Enter what ${speaker} says:`);
-      if (text !== null) {
-        // editor.commands.insertTag("dialogue", text || "", speaker);
-        editor.commands.insertContent(
-          `[dialogue speaker="${speaker}"]${text}[/dialogue]`
-        );
+      if (selectedText) {
+        // Wrap selected text
+        wrapSelectedText("dialogue", undefined, speaker);
+      } else {
+        // No selection - ask for text
+        const text = prompt(`Enter what ${speaker} says:`);
+        if (text !== null) {
+          editor.commands.insertContent(
+            `[dialogue speaker="${speaker}"]${text}[/dialogue]`
+          );
+        }
       }
     }
   };
@@ -126,7 +157,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
                 <button
                   key={`${btn.tag}-${btn.type}`}
                   onClick={() => {
-                    editor.commands.insertTag(btn.tag, "", btn.type);
+                    wrapSelectedText(btn.tag, btn.type);
                     setShowEventMenu(false);
                   }}
                   className="w-full text-left px-3 py-2 rounded hover:bg-slate-600 first:rounded-t-lg last:rounded-b-lg"
@@ -175,7 +206,7 @@ export default function Toolbar({ editor }: ToolbarProps) {
         {otherTags.map((btn) => (
           <button
             key={btn.tag}
-            onClick={() => editor.commands.insertTag(btn.tag, "", undefined)}
+            onClick={() => wrapSelectedText(btn.tag)}
             className="px-3 py-1 rounded bg-slate-700 hover:bg-slate-600"
           >
             {btn.label}

@@ -1,5 +1,105 @@
+import React from "react";
+
 interface Props {
   content: string;
+}
+
+// Parse markdown-style formatting (**bold** and *italic*) and return React elements
+// Recursively handles nested formatting
+function parseFormattedText(
+  text: string,
+  keyPrefix: string = ""
+): React.ReactNode {
+  if (!text) return text;
+
+  const parts: React.ReactNode[] = [];
+
+  // Match **bold** (greedy to handle nested cases)
+  const boldRegex = /\*\*([^*]+(?:\*[^*]+)*)\*\*/g;
+  // Match *italic* (but not **bold**)
+  const italicRegex = /(?<!\*)\*([^*]+)\*(?!\*)/g;
+
+  // First, find all bold and italic matches
+  const matches: Array<{
+    start: number;
+    end: number;
+    type: "bold" | "italic";
+    content: string;
+  }> = [];
+
+  let match;
+  while ((match = boldRegex.exec(text)) !== null) {
+    matches.push({
+      start: match.index,
+      end: match.index + match[0].length,
+      type: "bold",
+      content: match[1],
+    });
+  }
+
+  while ((match = italicRegex.exec(text)) !== null) {
+    // Check if this italic match overlaps with a bold match
+    const overlapsBold = matches.some(
+      (m) =>
+        m.type === "bold" && match!.index >= m.start && match!.index < m.end
+    );
+
+    if (!overlapsBold) {
+      matches.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        type: "italic",
+        content: match[1],
+      });
+    }
+  }
+
+  // Sort matches by start position
+  matches.sort((a, b) => a.start - b.start);
+
+  // Build React elements
+  let currentIndex = 0;
+  let keyCounter = 0;
+  matches.forEach((match) => {
+    // Add text before this match
+    if (match.start > currentIndex) {
+      const beforeText = text.substring(currentIndex, match.start);
+      if (beforeText) {
+        parts.push(beforeText);
+      }
+    }
+
+    // Recursively parse the content to handle nested formatting
+    const parsedContent = parseFormattedText(
+      match.content,
+      `${keyPrefix}-${keyCounter++}`
+    );
+
+    // Add formatted text
+    if (match.type === "bold") {
+      parts.push(
+        <strong key={`${keyPrefix}-bold-${match.start}`}>
+          {parsedContent}
+        </strong>
+      );
+    } else {
+      parts.push(
+        <em key={`${keyPrefix}-italic-${match.start}`}>{parsedContent}</em>
+      );
+    }
+
+    currentIndex = match.end;
+  });
+
+  // Add remaining text
+  if (currentIndex < text.length) {
+    const remainingText = text.substring(currentIndex);
+    if (remainingText) {
+      parts.push(remainingText);
+    }
+  }
+
+  return parts.length > 0 ? <>{parts}</> : text;
 }
 
 // Generate a consistent color for a speaker based on their name
@@ -163,7 +263,7 @@ export default function MagicRenderer({ content }: Props) {
             return (
               <div
                 key={index}
-                className="my-6 p-4 border border-dashed border-slate-600 rounded-xl text-slate-500 italic text-sm"
+                className="my-6 p-4 border border-dashed border-border rounded-xl text-muted-foreground italic text-sm"
               >
                 [Empty conversation between {conv.participants.join(", ")}]
               </div>
@@ -173,15 +273,15 @@ export default function MagicRenderer({ content }: Props) {
           return (
             <div
               key={index}
-              className="my-8 p-6 bg-linear-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 rounded-2xl border-2 border-slate-600/50 shadow-2xl relative overflow-hidden"
+              className="my-8 p-6 bg-linear-to-br from-card/90 via-muted/80 to-card/90 rounded-2xl border-2 border-border/50 shadow-2xl relative overflow-hidden"
             >
               {/* Conversation header with better styling */}
-              <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-slate-700/60">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-border/60">
                 <div className="w-10 h-10 rounded-full bg-linear-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
                   <span className="text-xl">💬</span>
                 </div>
                 <div className="flex-1">
-                  <div className="text-slate-300 font-semibold text-sm mb-1">
+                  <div className="text-foreground font-semibold text-sm mb-1">
                     Conversation
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -216,7 +316,7 @@ export default function MagicRenderer({ content }: Props) {
                     return (
                       <div
                         key={dIndex}
-                        className="text-slate-500 italic text-sm text-center py-2"
+                        className="text-muted-foreground italic text-sm text-center py-2"
                       >
                         [Empty message from {dialogue.speaker}]
                       </div>
@@ -237,7 +337,7 @@ export default function MagicRenderer({ content }: Props) {
                       {/* Avatar - only show if different speaker or first message */}
                       {!isSameSpeaker && (
                         <div
-                          className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg bg-linear-to-br ${speakerColor.bg} ring-2 ${speakerColor.ring}`}
+                          className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-foreground font-bold text-base shadow-lg bg-linear-to-br ${speakerColor.bg} ring-2 ${speakerColor.ring}`}
                         >
                           {dialogue.speaker.charAt(0).toUpperCase()}
                         </div>
@@ -259,8 +359,8 @@ export default function MagicRenderer({ content }: Props) {
                           <div
                             className={`px-5 py-3 rounded-2xl shadow-lg ${speakerColor.bubble} border-2 ${speakerColor.border} rounded-tl-sm`}
                           >
-                            <p className="text-white leading-relaxed text-base">
-                              {dialogue.text}
+                            <p className="text-foreground leading-relaxed text-base">
+                              {parseFormattedText(dialogue.text)}
                             </p>
                           </div>
 
@@ -485,7 +585,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-linear-to-br from-slate-950/95 via-slate-900/90 to-slate-950/95 border-2 border-slate-600/50 text-slate-400 px-5 py-4 rounded-xl shadow-xl overflow-hidden animate-fade-to-shadow"
+                  className="relative bg-linear-to-br from-card/95 via-muted/90 to-card/95 border-2 border-border/50 text-muted-foreground px-5 py-4 rounded-xl shadow-xl overflow-hidden animate-fade-to-shadow"
                 >
                   <div className="absolute inset-0 bg-linear-to-r from-transparent via-slate-800/30 to-transparent"></div>
                   <div className="relative z-10 italic font-semibold">
@@ -528,7 +628,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-slate-950/90 border-2 border-red-800/80 text-red-400 px-5 py-4 rounded-lg shadow-xl overflow-hidden animate-shake"
+                  className="relative bg-card/90 border-2 border-red-800/80 text-red-400 px-5 py-4 rounded-lg shadow-xl overflow-hidden animate-shake"
                   style={{
                     boxShadow: "inset 0 0 50px rgba(0, 0, 0, 0.8)",
                   }}
@@ -563,7 +663,7 @@ export default function MagicRenderer({ content }: Props) {
               return (
                 <div
                   key={index}
-                  className="relative bg-slate-900/95 border-2 border-purple-800/60 text-purple-300 px-5 py-4 rounded-lg shadow-xl overflow-hidden animate-glitch"
+                  className="relative bg-card/95 border-2 border-purple-800/60 text-purple-300 px-5 py-4 rounded-lg shadow-xl overflow-hidden animate-glitch"
                 >
                   <div className="absolute inset-0 bg-[linear-linear(90deg,transparent_50%,rgba(147,51,234,0.1)_50%,transparent_50%)] bg-size-[20px_100%] animate-static"></div>
                   <div className="relative z-10 font-mono text-sm">
@@ -673,7 +773,7 @@ export default function MagicRenderer({ content }: Props) {
 
             default:
               return (
-                <div key={index} className="text-slate-400 italic">
+                <div key={index} className="text-muted-foreground italic">
                   {text}
                 </div>
               );
@@ -697,7 +797,10 @@ export default function MagicRenderer({ content }: Props) {
         if (/\[shake\](.*?)\[\/shake\]/.test(line)) {
           const text = line.match(/\[shake\](.*?)\[\/shake\]/)?.[1];
           return (
-            <div key={index} className="text-white font-bold animate-shake">
+            <div
+              key={index}
+              className="text-foreground font-bold animate-shake"
+            >
               {text}
             </div>
           );
@@ -717,7 +820,7 @@ export default function MagicRenderer({ content }: Props) {
             return (
               <div
                 key={index}
-                className="my-4 p-3 border border-dashed border-slate-600 rounded-lg text-slate-500 italic text-sm"
+                className="my-4 p-3 border border-dashed border-border rounded-lg text-muted-foreground italic text-sm"
               >
                 [Empty dialogue from {speaker}]
               </div>
@@ -730,7 +833,7 @@ export default function MagicRenderer({ content }: Props) {
               className="my-5 flex items-start gap-4 animate-fade-in"
             >
               {/* Avatar */}
-              <div className="shrink-0 w-14 h-14 rounded-full bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg ring-2 ring-blue-400/50">
+              <div className="shrink-0 w-14 h-14 rounded-full bg-linear-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-foreground font-bold text-xl shadow-lg ring-2 ring-blue-400/50">
                 {speaker.charAt(0).toUpperCase()}
               </div>
 
@@ -742,13 +845,13 @@ export default function MagicRenderer({ content }: Props) {
                 </div>
                 <div className="relative">
                   {/* Speech bubble */}
-                  <div className="bg-slate-800/80 border-2 border-blue-500/50 rounded-2xl px-5 py-4 shadow-lg relative">
+                  <div className="bg-card/80 border-2 border-blue-500/50 rounded-2xl px-5 py-4 shadow-lg relative">
                     {/* Tail pointing to avatar */}
                     <div className="absolute -left-3 top-6 w-0 h-0 border-t-12 border-t-transparent border-b-12 border-b-transparent border-r-12 border-r-slate-800/80"></div>
                     <div className="absolute -left-[13px] top-6 w-0 h-0 border-t-12 border-t-transparent border-b-12 border-b-transparent border-r-12 border-r-blue-500/50"></div>
 
-                    <p className="text-white leading-relaxed text-base relative z-10">
-                      {text}
+                    <p className="text-foreground leading-relaxed text-base relative z-10">
+                      {parseFormattedText(text)}
                     </p>
                   </div>
                 </div>
@@ -758,7 +861,7 @@ export default function MagicRenderer({ content }: Props) {
         }
 
         // Regular text line
-        return <p key={index}>{line}</p>;
+        return <p key={index}>{parseFormattedText(line)}</p>;
       })}
     </div>
   );
