@@ -1,6 +1,7 @@
 import "./globals.css";
-import { cormorant, satoshi } from "./font";
 import { Toaster } from "sonner";
+import NextTopLoader from "nextjs-toploader";
+import { cormorant, satoshi } from "./font";
 
 export const metadata = {
   title: "Mythoria",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body
         className={`${cormorant.variable} ${satoshi.variable} font-body antialiased`}
       >
+        <NextTopLoader />
         {children}
         <Toaster position="top-right" />
       </body>
