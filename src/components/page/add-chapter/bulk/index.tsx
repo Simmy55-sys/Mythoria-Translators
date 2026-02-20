@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { defineStepper } from "@/components/ui/stepper";
 import {
   getTranslatorSeriesAction,
-  createChapterAction,
+  createBulkChaptersAction,
 } from "@/server-actions/translator";
 import { toast } from "sonner";
 import LoadingToast from "@/global/toasts/loading";
@@ -252,89 +252,86 @@ export default function AddBulkChaptersComponent() {
     );
 
     try {
-      let successCount = 0;
-      let errorCount = 0;
+      // Build payload for bulk endpoint: same shape as CreateChapterDto per chapter
+      const chaptersPayload = chapters.map((ch) => ({
+        title: ch.chapterTitle,
+        chapterNumber: parseInt(ch.chapterNumber, 10),
+        publishDate: new Date(bulkSettings.publishDate).toISOString(),
+        language: bulkSettings.language,
+        isPremium: ch.isPremium,
+        priceInCoins: ch.isPremium ? (ch.priceInCoins || 20) : 20,
+        notes: bulkSettings.notes || undefined,
+        content:
+          ch.fileSource === "inbuilt" || (ch.fileSource === "upload" && !ch.chapterFile)
+            ? ch.content
+            : "",
+        fileUrl: ch.fileUrl || undefined,
+      }));
 
-      // Publish chapters sequentially to avoid overwhelming the server
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("chapters", JSON.stringify(chaptersPayload));
+
+      // Append files in same order as chapters that need a file (upload source with file)
       for (const chapter of chapters) {
-        try {
-          const formDataToSubmit = new FormData();
-          formDataToSubmit.append("title", chapter.chapterTitle);
-          formDataToSubmit.append("chapterNumber", chapter.chapterNumber);
-          formDataToSubmit.append(
-            "publishDate",
-            new Date(bulkSettings.publishDate).toISOString()
-          );
-          formDataToSubmit.append("language", bulkSettings.language);
-          formDataToSubmit.append("isPremium", chapter.isPremium.toString());
-
-          if (chapter.fileSource === "upload" && chapter.chapterFile) {
-            formDataToSubmit.append("chapterFile", chapter.chapterFile);
-            formDataToSubmit.append("content", "");
-          } else {
-            formDataToSubmit.append("content", chapter.content);
-          }
-
-          if (chapter.isPremium) {
-            formDataToSubmit.append(
-              "priceInCoins",
-              (chapter.priceInCoins || 20).toString()
-            );
-          }
-
-          // if (bulkSettings.isPremium) {
-          //   formDataToSubmit.append("priceInCoins", "20");
-          // }
-
-          if (bulkSettings.notes) {
-            formDataToSubmit.append("notes", bulkSettings.notes);
-          }
-
-          const result = await createChapterAction(
-            selectedSeries.id,
-            formDataToSubmit
-          );
-
-          if (result.success) {
-            successCount++;
-          } else {
-            errorCount++;
-            console.error(
-              `Failed to publish chapter ${chapter.chapterNumber}:`,
-              result.error
-            );
-          }
-        } catch (error: any) {
-          errorCount++;
-          console.error(
-            `Error publishing chapter ${chapter.chapterNumber}:`,
-            error
-          );
+        if (chapter.fileSource === "upload" && chapter.chapterFile) {
+          formDataToSubmit.append("chapterFiles", chapter.chapterFile);
         }
       }
 
-      toast.custom(
-        (t) => (
-          <SuccessToast
-            text={`Successfully published ${successCount} chapter(s)${
-              errorCount > 0 ? `. ${errorCount} failed.` : "!"
-            }`}
-            toastId={t}
-          />
-        ),
-        { id: notificationId }
+      const result = await createBulkChaptersAction(
+        selectedSeries.id,
+        formDataToSubmit
       );
 
-      // Reset form
-      setSelectedSeries(null);
-      setChapters([]);
-      setNextChapterNumber("1");
-      setBulkSettings({
-        language: "English",
-        isPremium: false,
-        publishDate: new Date().toISOString().split("T")[0],
-        notes: "",
-      });
+      if (!result.success) {
+        toast.custom(
+          (t) => (
+            <ErrorToast
+              text={result.error || "Failed to publish chapters"}
+              toastId={t}
+            />
+          ),
+          { id: notificationId }
+        );
+      } else {
+        const data = result.data!;
+        const successCount = data.successful;
+        const errorCount = data.failed;
+
+        toast.custom(
+          (t) => (
+            <SuccessToast
+              text={`Successfully published ${successCount} chapter(s)${
+                errorCount > 0 ? `. ${errorCount} failed.` : "!"
+              }`}
+              toastId={t}
+            />
+          ),
+          { id: notificationId }
+        );
+
+        if (errorCount > 0) {
+          const failed = data.results.filter((r) => !r.success);
+          failed.forEach((r) => {
+            if (!r.success) {
+              console.error(
+                `Chapter ${r.chapterNumber} "${r.title}": ${r.error}`
+              );
+            }
+          });
+        }
+
+        // Reset form after successful bulk response
+        setSelectedSeries(null);
+        setChapters([]);
+        setNextChapterNumber("1");
+        setBulkSettings({
+          language: "English",
+          isPremium: false,
+          publishDate: new Date().toISOString().split("T")[0],
+          notes: "",
+        });
+      }
     } catch (error: any) {
       console.error("Error publishing chapters:", error);
       toast.custom(

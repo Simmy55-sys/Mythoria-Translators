@@ -333,6 +333,40 @@ class ApiClient {
   }
 
   /**
+   * Create multiple chapters in one request (bulk upload)
+   * @param seriesId - The series ID
+   * @param formData - FormData with "chapters" (JSON string) and optional "chapterFiles" (multiple files)
+   * @param accessToken - The user's access token
+   */
+  async createBulkChapters(
+    seriesId: string,
+    formData: FormData,
+    accessToken: string
+  ) {
+    return this.execute<{
+      total: number;
+      successful: number;
+      failed: number;
+      results: Array<
+        | { success: true; data: any }
+        | {
+            success: false;
+            error: string;
+            chapterNumber: number;
+            title: string;
+          }
+      >;
+    }>({
+      method: "POST",
+      endpoint: `/translator/series/chapter/${seriesId}/bulk`,
+      data: formData,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  }
+
+  /**
    * Get dashboard statistics
    * @param accessToken - The user's access token
    */
